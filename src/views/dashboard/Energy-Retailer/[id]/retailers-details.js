@@ -27,7 +27,8 @@ import Breadcrumb from '../../../../layouts/full/shared/breadcrumb/Breadcrumb';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Link } from 'react-router-dom';
-
+import EnhancedCard from '../../../brands/compare-your-bill/EnhancedCard';
+import BlankCard from '../../../../components/shared/BlankCard';
 
 const currentVersions = [
   { script: "Tango Terms", state: "VIC", fuel: "Gas", effective: "5th May 2024, 12:04 PM", updatedBy: "Sam Jones" },
@@ -44,10 +45,15 @@ const pastVersionsData = [
 
 const RetailerDetails = () => {
   const [tabValue, setTabValue] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+
+  const filteredPastVersions = pastVersionsData.filter(version =>
+    version.version.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <Box>
@@ -55,75 +61,101 @@ const RetailerDetails = () => {
       <Breadcrumb title="Energy Retailers" subtitle="This page allows you to manage selling brands, terms and conditions, and agent scripting." />
 
       <Box sx={{ mt: 4 }}>
-        <Typography variant="h5">Agent Scripting</Typography>
-        <Tabs value={tabValue} onChange={handleTabChange}>
-          <Tab label="Current Version" />
-          <Tab label="Past Versions" />
-        </Tabs>
+        <EnhancedCard title="Agent Scripting">
+          <Tabs value={tabValue} onChange={handleTabChange}>
+            <Tab label="Current Version" />
+            <Tab label="Past Versions" />
+          </Tabs>
 
-        {tabValue === 0 && (
-          <Box sx={{ mt: 2 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Script</TableCell>
-                  <TableCell>State</TableCell>
-                  <TableCell>Fuel</TableCell>
-                  <TableCell>Effective</TableCell>
-                  <TableCell>Updated by</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {currentVersions.map((version, index) => (
-                  <TableRow key={index}>
-                  <TableCell>
-                  <Link to={`/tango-terms/${version.script}`}>{version.script}</Link>
-                </TableCell>                    <TableCell>{version.state}</TableCell>
-                    <TableCell>{version.fuel}</TableCell>
-                    <TableCell>{version.effective}</TableCell>
-                    <TableCell>{version.updatedBy}</TableCell>
+          {tabValue === 0 && (
+            <Box sx={{ mt: 2 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant="h6">Script</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6">State</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Fuel</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Effective</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Updated by</Typography>
+                    </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
-        )}
+                </TableHead>
+                <TableBody>
+                  {currentVersions.map((version, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Link to={`/tango-terms/${version.script}`}>{version.script}</Link>
+                      </TableCell>
+                      <TableCell>{version.state}</TableCell>
+                      <TableCell>{version.fuel}</TableCell>
+                      <TableCell>{version.effective}</TableCell>
+                      <TableCell>{version.updatedBy}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          )}
 
-        {tabValue === 1 && (
-          <Box sx={{ mt: 2 }}>
-            <TextField
-              fullWidth
-              label="Search Version ID"
-              variant="outlined"
-              size="small"
-              sx={{ mb: 2 }}
-            />
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Version</TableCell>
-                  <TableCell>State</TableCell>
-                  <TableCell>Fuel</TableCell>
-                  <TableCell>Valid From</TableCell>
-                  <TableCell>Valid To</TableCell>
-                  <TableCell>Updated by</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {pastVersionsData.map((version, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{version.version}</TableCell>
-                    <TableCell>{version.state}</TableCell>
-                    <TableCell>{version.fuel}</TableCell>
-                    <TableCell>{version.validFrom}</TableCell>
-                    <TableCell>{version.validTo}</TableCell>
-                    <TableCell>{version.updatedBy}</TableCell>
+          {tabValue === 1 && (
+            <Box sx={{ mt: 2 }}>
+              <TextField
+                fullWidth
+                label="Search Version ID"
+                variant="outlined"
+                size="small"
+                sx={{ mb: 2 }}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on input change
+              />
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant="h6">Version</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6">State</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Fuel</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Valid From</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Valid To</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Updated by</Typography>
+                    </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
-        )}
+                </TableHead>
+                <TableBody>
+                  {filteredPastVersions.map((version, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{version.version}</TableCell>
+                      <TableCell>{version.state}</TableCell>
+                      <TableCell>{version.fuel}</TableCell>
+                      <TableCell>{version.validFrom}</TableCell>
+                      <TableCell>{version.validTo}</TableCell>
+                      <TableCell>{version.updatedBy}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          )}
+        </EnhancedCard>
       </Box>
     </Box>
   );
