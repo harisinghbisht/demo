@@ -17,6 +17,9 @@ import {
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useParams } from 'react-router-dom';
+import BlankCard from '../../../../components/shared/BlankCard';
+import EnhancedCard from '../../../brands/compare-your-bill/EnhancedCard';
+import ParentCard from '../../../../components/shared/ParentCard';
 
 const states = ["VIC", "NSW", "SA", "QLD"];
 const fuels = ["Gas", "Electricity", "Dual Fuel"];
@@ -38,24 +41,44 @@ const TangoTermsDetail = () => {
   ]);
 
   const handleSave = () => {
-    // Logic to save changes and generate a new version ID
-    const newVersionId = `v${versions.length + 1}_TAN_V_${selectedStates.join(',')}_${new Date().toISOString()}`;
-    
+    // Get the current date/time
+    const currentDate = new Date();
+    const formattedCurrentDate = currentDate.toLocaleString();
+
+    // Update the validTo date of the previous version to current date
+    const updatedVersions = versions.map((version, index) => {
+      if (index === 0) { // Update the most recent version
+        return { ...version, validTo: formattedCurrentDate };
+      }
+      return version;
+    });
+
+    // Generate a new version ID
+    const newVersionId = `v${updatedVersions.length + 1}_TAN_V_${selectedStates.join(',')}_${currentDate.toISOString()}`;
+
     // Create a new version entry
     const newVersion = {
       version: newVersionId,
-      validFrom: new Date().toLocaleString(),
+      validFrom: formattedCurrentDate,
       validTo: "Current",
-      updatedBy: "Current User" // Replace with actual user information
+      updatedBy: "Current User", // Replace with actual user information
     };
 
-    // Add the new version to the versions array
-    setVersions([newVersion, ...versions]); // Add new version at the top
+    // Update the state with the new version and the updated versions
+    setVersions([newVersion, ...updatedVersions]);
+    
+    // Optionally, reset form fields if needed
+    setButtonLabel('Tango Terms');
+    setSelectedStates(["VIC"]);
+    setSelectedFuels(["Gas"]);
+    setScriptCopy('');
+    setSelectedBrand('');
+    setSelectedLogic('');
   };
 
   return (
     <Box sx={{ mt: 4 }}>
-      <Typography variant="h5">Edit {scriptId}</Typography>
+    <ParentCard title={`Edit ${scriptId}`}>
       <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <TextField
           label="Button Label"
@@ -125,7 +148,7 @@ const TangoTermsDetail = () => {
         </FormControl>
 
         {/* WYSIWYG Editor for Script Copy */}
-        <Typography variant="h6">Script Copy</Typography>
+        <Typography variant="h6">Script</Typography>
         <ReactQuill
           value={scriptCopy}
           onChange={setScriptCopy}
@@ -142,16 +165,26 @@ const TangoTermsDetail = () => {
 
         <Button variant="contained" sx={{ mt: 2 }} onClick={handleSave}>Save Changes</Button>
       </Box>
+    </ParentCard>
 
       <Box sx={{ mt: 4 }}>
-        <Typography variant="h6">Versions</Typography>
+      <EnhancedCard title="Versions" >
+        <BlankCard>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Version</TableCell>
-              <TableCell>Valid From</TableCell>
-              <TableCell>Valid To</TableCell>
-              <TableCell>Updated by</TableCell>
+              <TableCell>
+              <Typography variant="h6">Version</Typography>
+              </TableCell>
+              <TableCell>
+              <Typography variant="h6">Valid From</Typography>
+              </TableCell>
+              <TableCell>
+              <Typography variant="h6">Valid To</Typography>
+              </TableCell>
+              <TableCell>
+              <Typography variant="h6">Updated by</Typography>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -165,6 +198,8 @@ const TangoTermsDetail = () => {
             ))}
           </TableBody>
         </Table>
+        </BlankCard>
+        </EnhancedCard>
       </Box>
     </Box>
   );
