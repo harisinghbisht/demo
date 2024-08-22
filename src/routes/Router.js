@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 
 import Loadable from '../layouts/full/shared/loadable/Loadable';
 import { exact } from 'prop-types';
-import TangoTermsDetail from '../views/dashboard/Energy-Retailer/[id]/tangoterm-detailed';
+import EnergyTermsDetail from '../views/dashboard/Energy-Retailer/[id]/Energyterm-detailed';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -49,7 +49,7 @@ const Router = [
       { path: '/offers', exact: true, element: <OffersPage /> },
       { path: '/energy-retailers', exact: true, element: <EnergyRetailerDash /> },
       { path: "/energy-retailers/:id", exact: true, element:<RetailerDetails /> },
-      { path:"/tango-terms/:scriptId", exact:true , element:<TangoTermsDetail />},
+      { path:"/tango-terms/:scriptId", exact:true , element:<EnergyTermsDetail />},
       { path: '/brands/compare-your-bill', exact: true, element: <BrandDash /> },
       { path: '/create-leads', exact: true, element: <CreateLeadPage /> },
       { path: '/sellable-locations', exact: true, element: <SellableLocationPage /> },
